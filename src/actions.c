@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shhidrob <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 19:24:00 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/10/25 20:41:00 by shhidrob         ###   ########.fr       */
+/*   Updated: 2025/11/18 18:00:17 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../inc/philo.h"
 
 void	*single_philo(void *p)
 {
-	t_philo *plo;
+	t_philo	*plo;
+
 	plo = (t_philo *)p;
-	pthread_mutex_lock(&plo->args->fork[plo->left]);
+	pthread_mutex_lock(&plo->args->fork[plo->left_f]);
 	printer(plo, GFORK);
 	ft_sleeper(plo, plo->args->t_die);
 	pthread_mutex_unlock(&plo->args->fork[plo->left_f]);
@@ -24,7 +25,7 @@ void	*single_philo(void *p)
 	pthread_mutex_lock(&plo->args->checks);
 	plo->args->fnsh_game = true;
 	pthread_mutex_unlock(&plo->args->checks);
-	return(NULL);
+	return (NULL);
 }
 
 void	grab_fork(t_philo *plo)
@@ -40,7 +41,7 @@ void	grab_fork(t_philo *plo)
 	{
 		pthread_mutex_lock(&plo->args->fork[plo->right_f]);
 		pthread_mutex_lock(&plo->args->fork[plo->left_f]);
-		printerright_f(plo);
+		printeright_f(plo);
 	}
 }
 
@@ -50,7 +51,7 @@ void	p_eats(t_philo *plo)
 
 	lock = true;
 	pthread_mutex_lock(&plo->args->checks);
-	if(plo->args->fnsh_game == false)
+	if (plo->args->fnsh_game == false)
 	{
 		lock = false;
 		pthread_mutex_unlock(&plo->args->checks);
@@ -58,11 +59,13 @@ void	p_eats(t_philo *plo)
 		printer(plo, EATING);
 		pthread_mutex_lock(&plo->args->checks);
 		plo->last_meal = timestamp(plo->args);
-		plo->meal_eaten++;
 		pthread_mutex_unlock(&plo->args->checks);
 		ft_sleeper(plo, plo->args->t_eat);
+		pthread_mutex_lock(&plo->args->checks);
+		plo->meal_eaten++;
+		pthread_mutex_unlock(&plo->args->checks);
 		pthread_mutex_unlock(&plo->args->fork[plo->left_f]);
-		pthread_mutex_unlock(&plo->args->forl[plo->right_f]);
+		pthread_mutex_unlock(&plo->args->fork[plo->right_f]);
 	}
 	if (lock)
 		pthread_mutex_unlock(&plo->args->checks);
@@ -70,16 +73,16 @@ void	p_eats(t_philo *plo)
 
 void	p_thinks(t_philo *plo)
 {
-	if(plo->args-fnsh_game == false)
+	if (plo->args->fnsh_game == false)
 		printer(plo, THINKING);
+	usleep(10000);
 }
 
 void	p_sleeps(t_philo *plo)
 {
-	if(plo->args->fnsh_game == false)
+	if (plo->args->fnsh_game == false)
 	{
 		printer(plo, SLEEPING);
 		ft_sleeper(plo, plo->args->t_sleep);
 	}
 }
-		

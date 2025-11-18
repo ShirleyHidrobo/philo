@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shhidrob <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 19:11:26 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/10/25 19:14:24 by shhidrob         ###   ########.fr       */
+/*   Updated: 2025/11/18 18:03:08 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../inc/philo.h"
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	t_store *store;
+	t_store	*store;
 
-	if(validate_args(ac, av) != 0)
-		return(FAILURE);
-	store = (t_store *)ft_calloc(1, sizeof(t_store));
-	if(!store)
-		return(FAILURE);
-	if(init_start(av, store))
-		return(FAILURE);
+	if (validate_args(ac, av) != 0)
+		return (EXIT_FAILURE);
+	store = ft_calloc(1, sizeof(t_store));
+	if (!store)
+		return (FAILURE);
+	if (init_start(av, store))
+		return (FAILURE);
 	philo_start(store);
 	philo_destroy(store);
-	return(SUCCESS);
+	return (SUCCESS);
 }
