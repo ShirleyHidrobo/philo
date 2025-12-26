@@ -12,26 +12,29 @@
 
 #include "../inc/philo.h"
 
+// FIX: la lógica anterior estaba invertida, ahora devuelve 1 si es dígito, 0 si no
 static int	ft_isdigit(int ascii_nbr)
 {
 	if (ascii_nbr >= '0' && ascii_nbr <= '9')
-		return (FAILURE);
-	return (SUCCESS);
+		return (1);
+	return (0);
 }
 
+// FIX: la función ahora recorre todos los argumentos y caracteres, y valida correctamente
 int	check_digit(char **str)
 {
-	int	i;
-	int	j;
+	int i = 1; // asume que str[0] es el nombre del programa
+	int j;
 
-	i = 1;
 	while (str[i])
 	{
 		j = 0;
+		if (str[i][j] == '-') // permite negativos solo si es el primer caracter
+			j++;
 		while (str[i][j])
 		{
 			if (!ft_isdigit(str[i][j]))
-				return (FAILURE);
+				return (FAILURE); // retorna FAILURE si encuentra un caracter no numérico
 			j++;
 		}
 		i++;
@@ -39,6 +42,7 @@ int	check_digit(char **str)
 	return (SUCCESS);
 }
 
+// FIX: Devuelve -1 en caso de error y chequea overflow correctamente
 int	ft_atoi(const char *str)
 {
 	int		i;
@@ -49,47 +53,41 @@ int	ft_atoi(const char *str)
 	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
 		i++;
 	if (str[i] == '-')
-		return (FAILURE);
+		return (-1);
 	else if (str[i] == '+')
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		res *= 10;
-		res += str[i] - '0';
+		res = res * 10 + (str[i] - '0');
+		if (res > INT_MAX)
+			return (-1);
 		i++;
 	}
-	if (res > INT_MAX)
-		return (FAILURE);
-	return (res);
+	return ((int)res);
 }
 
 void	*ft_calloc(size_t count, size_t size)
 {
-	size_t	i;
-	size_t	j;
+	size_t	total;
 	char	*ptr;
 
-	i = 0;
-	j = count * size;
-	if (size >= SIZE_MAX / count)
+	// FIX: previous logic failed for count == 0, should check count != 0 && size > SIZE_MAX / count
+	if (count != 0 && size > SIZE_MAX / count)
 		return (NULL);
-	ptr = malloc(count * size);
+	total = count * size;
+	ptr = malloc(total);
 	if (!ptr)
 		return (NULL);
-	while (i < j)
-	{
+	for (size_t i = 0; i < total; i++)
 		ptr[i] = '\0';
-		i++;
-	}
 	return (ptr);
 }
 
+// FIX: Bloquea el mutex antes de comprobar fnsh_game para evitar condiciones de carrera
 void	printer(t_philo *plo, char *str)
 {
+	pthread_mutex_lock(&plo->args->checks);
 	if (plo->args->fnsh_game == false)
-	{
-		pthread_mutex_lock(&plo->args->checks);
 		printf("%lld %d %s\n", timestamp(plo->args), plo->id_num, str);
-		pthread_mutex_unlock(&plo->args->checks);
-	}
+	pthread_mutex_unlock(&plo->args->checks);
 }

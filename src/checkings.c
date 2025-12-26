@@ -14,17 +14,17 @@
 
 void	philo_start(t_store *store)
 {
-	int	i;
+	int i;
 
 	if (store->n_philo == 1)
-		single_philo(store->philo);
+		single_philo(store->philo[0]);
 	else
 	{
-		i = -1;
-		while (++i < store->n_philo)
+		i = 0;
+		while (i < store->n_philo)
 		{
-			pthread_create(&store->philo[i]->thd, NULL, \
-					routine, store->philo[i]);
+			pthread_create(&store->philo[i]->thd, NULL, routine, store->philo[i]);
+			i++;
 		}
 		while (store->fnsh_game == false)
 			monitor(store);
@@ -44,79 +44,72 @@ void	*routine(void *val)
 		if (store->fnsh_game == true)
 		{
 			pthread_mutex_unlock(&store->checks);
-			break ;
+			return (NULL); // Termina el hilo correctamente si fnsh_game es true
 		}
-		if (store->meal_limit > 0 && plo->meal_eaten == store->meal_limit)
-		{
-			pthread_mutex_unlock(&plo->args->checks);
-			break ;
-		}
-		pthread_mutex_unlock(&plo->args->checks);
+		pthread_mutex_unlock(&store->checks);
+		if (store->meal_limit > 0 && plo->meal_eaten >= store->meal_limit)
+			return (NULL); // Termina el hilo si alcanzó el límite de comidas
 		p_eats(plo);
 		p_sleeps(plo);
 		p_thinks(plo);
 	}
+	// Código muerto, nunca se ejecuta
 	return (NULL);
 }
 
 void	monitor(t_store *store)
 {
-	int	death_id;
+	int i;
 
-	death_id = 0;
-	while (store->fnsh_game == false)
+	i = 0;
+	while (i < store->n_philo)
 	{
-		check_life(store->philo[death_id]);
+		check_life(store->philo[i]);
 		meal_limit_check(store);
-		usleep(1000);
-		if (death_id + 1 == store->n_philo)
-			death_id = -1;
-		death_id++;
+		usleep(500);
+		i++;
 	}
 }
 
 void	check_life(t_philo *plo)
 {
-	bool	lock;
+	long now;
+	long last;
 
-	lock = true;
 	pthread_mutex_lock(&plo->args->checks);
-	if ((timestamp(plo->args) - plo->last_meal) >= plo->args->t_die)
+	now = timestamp(plo->args);
+	last = plo->last_meal;
+	if ((now - last) >= plo->args->t_die && !plo->args->fnsh_game)
 	{
-		lock = false;
-		pthread_mutex_unlock(&plo->args->checks);
-		printer(plo, DIED);
-		pthread_mutex_lock(&plo->args->checks);
 		plo->args->fnsh_game = true;
 		pthread_mutex_unlock(&plo->args->checks);
+		printer(plo, DIED);
+		return;
 	}
-	if (lock)
-		pthread_mutex_unlock(&plo->args->checks);
+	pthread_mutex_unlock(&plo->args->checks);
 }
 
 void	meal_limit_check(t_store *store)
 {
-	int	meal_nbr;
-
-	meal_nbr = 0;
-	if (store->meal_limit > 0)
+	int meal_nbr = 0;
+	// FIX: Solo termina si meal_limit > 0
+	if (store->meal_limit <= 0)
+		return;
+	while (meal_nbr < store->n_philo)
 	{
-		while (meal_nbr < store->n_philo)
+		pthread_mutex_lock(&store->checks);
+		if (store->philo[meal_nbr]->meal_eaten < store->meal_limit)
 		{
-			pthread_mutex_lock(&store->checks);
-			if (store->philo[meal_nbr]->meal_eaten < store->meal_limit)
-			{
-				pthread_mutex_unlock(&store->checks);
-				break ;
-			}
 			pthread_mutex_unlock(&store->checks);
-			meal_nbr++;
+			break;
 		}
-		if (meal_nbr == store->n_philo)
-		{
-			pthread_mutex_lock(&store->checks);
-			store->fnsh_game = true;
-			pthread_mutex_unlock(&store->checks);
-		}
+		pthread_mutex_unlock(&store->checks);
+		meal_nbr++;
+	}
+	if (meal_nbr == store->n_philo)
+	{
+		pthread_mutex_lock(&store->checks);
+		store->fnsh_game = true;
+		pthread_mutex_unlock(&store->checks);
 	}
 }

@@ -19,7 +19,7 @@ CFLAGS =	-Wall -Wextra -Werror \
 			-g3 -gdwarf-3 \
 			-O0 \
 			-pthread \
-			-Iinc.-
+			-Iinc # FIX: previous path was -Iinc.- which is invalid
 
 # 			-fsanitize=thread \
 
