@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 19:24:00 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/11/18 18:00:17 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/08 20:56:19 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	grab_fork(t_philo *plo)
 {
 	if (plo->id_num % 2)
 	{
-		usleep(1500);
+		//usleep(1500);
 		pthread_mutex_lock(&plo->args->fork[plo->right_f]);
 		pthread_mutex_lock(&plo->args->fork[plo->left_f]);
 		printeright_f(plo);
@@ -47,12 +47,15 @@ void	grab_fork(t_philo *plo)
 
 void	p_eats(t_philo *plo)
 {
+	pthread_mutex_lock(&plo->args->fnsh_game);
 	bool	lock;
 
 	lock = true;
+	//pthread_mutex_lock(&plo->args->fnsh_game);
 	pthread_mutex_lock(&plo->args->checks);
 	if (plo->args->fnsh_game == false)
 	{
+		pthread_mutex_unlock(&plo->args->fnsh_game);
 		lock = false;
 		pthread_mutex_unlock(&plo->args->checks);
 		grab_fork(plo);
@@ -73,15 +76,21 @@ void	p_eats(t_philo *plo)
 
 void	p_thinks(t_philo *plo)
 {
+	pthread_mutex_lock(&plo->args->fnsh_game);
 	if (plo->args->fnsh_game == false)
+	{
+		pthread_mutex_unlock(&plo->args->fnsh_game);
 		printer(plo, THINKING);
-	usleep(10000);
+	}
+	// usleep(10000);
 }
 
 void	p_sleeps(t_philo *plo)
 {
+	pthread_mutex_lock(&plo->args->fnsh_game);
 	if (plo->args->fnsh_game == false)
 	{
+		pthread_mutex_unlock(&plo->args->fnsh_game);
 		printer(plo, SLEEPING);
 		ft_sleeper(plo, plo->args->t_sleep);
 	}

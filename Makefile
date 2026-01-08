@@ -6,7 +6,7 @@
 #    By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/18 15:31:32 by shhidrob          #+#    #+#              #
-#    Updated: 2025/11/18 17:51:32 by shhidrob         ###   ########.fr        #
+#    Updated: 2026/01/08 20:29:25 by shhidrob         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,11 @@ CFLAGS =	-Wall -Wextra -Werror \
 			-g3 -gdwarf-3 \
 			-O0 \
 			-pthread \
-			-Iinc.-
+			-Iinc.- \
+			-fsanitize=thread \
 
-# 			-fsanitize=thread \
+
+
 
 SRC_DIR = ./src/
 OBJ_DIR = ./obj/

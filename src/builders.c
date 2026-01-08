@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 18:06:01 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/11/18 17:58:39 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/08 18:15:46 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	validate_args(int ac, char **av)
 {
-	if (ac > 5 && ac < 6)
+	if (ac != 5 && ac != 6)
 	{
 		printf("%s\n", ERR_ARGC_NUM);
 		printf("%s\n", ERR_ARG_EXPECT);

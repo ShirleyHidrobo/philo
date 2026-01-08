@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 19:23:55 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/11/18 18:02:20 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/08 20:08:11 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	philo_start(t_store *store)
 	int	i;
 
 	if (store->n_philo == 1)
-		single_philo(store->philo);
+		single_philo(store->philo[0]);
 	else
 	{
 		i = -1;
@@ -38,6 +38,8 @@ void	*routine(void *val)
 
 	plo = (t_philo *)val;
 	store = plo->args;
+	if (plo->id_num % 2)
+		usleep(1500);
 	while (1)
 	{
 		pthread_mutex_lock(&store->checks);
@@ -46,11 +48,11 @@ void	*routine(void *val)
 			pthread_mutex_unlock(&store->checks);
 			break ;
 		}
-		if (store->meal_limit > 0 && plo->meal_eaten == store->meal_limit)
-		{
-			pthread_mutex_unlock(&plo->args->checks);
-			break ;
-		}
+		// if (store->meal_limit > 0 && plo->meal_eaten == store->meal_limit)
+		// {
+		// 	pthread_mutex_unlock(&plo->args->checks);
+		// 	break ;
+		// }
 		pthread_mutex_unlock(&plo->args->checks);
 		p_eats(plo);
 		p_sleeps(plo);
@@ -116,6 +118,7 @@ void	meal_limit_check(t_store *store)
 		{
 			pthread_mutex_lock(&store->checks);
 			store->fnsh_game = true;
+			printf("\e[31mALL EATEN\e[m\n");
 			pthread_mutex_unlock(&store->checks);
 		}
 	}
