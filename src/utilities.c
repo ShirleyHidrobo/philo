@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:31:08 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/10 20:22:38 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 21:39:22 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,25 +87,15 @@ void	printer(t_philo *plo, t_state state)
 	long long	time;
 
 	pthread_mutex_lock(&plo->args->print);
-
 	time = timestamp(plo->args);
-
-	if(state == DIED)
-	{
-		printf("%lld %d died\n", timestamp(plo->args), plo->id_num);
-		pthread_mutex_unlock(&plo->args->print);
-		return ;
-	}
-
+	if (state == DIED)
+		return (printf("%lld %d died\n", timestamp(plo->args), plo->id_num),
+			pthread_mutex_unlock(&plo->args->print), (void)0);
 	pthread_mutex_lock(&plo->args->checks);
 	if (plo->args->fnsh_game == GAME_OVER)
-	{
-		pthread_mutex_unlock(&plo->args->checks);
-		pthread_mutex_unlock(&plo->args->print);
-		return ;
-	}
+		return (pthread_mutex_unlock(&plo->args->checks),
+			pthread_mutex_unlock(&plo->args->print), (void)0);
 	pthread_mutex_unlock(&plo->args->checks);
-
 	if (state == GFORK)
 		printf("%lld %d has taken a fork\n", time, plo->id_num);
 	else if (state == EATING)

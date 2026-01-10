@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 18:42:37 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/10 20:16:46 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 21:18:17 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,6 @@
 # define ERR_INV_ARG "Invalid argument detected"
 # define ERR_ARGC_NUM "The program expects 4-5 Numeric Args"
 # define ERR_ARG_EXPECT "Ex: ./philo [num of philo] [time to die] [time to eat]"
-// # define GFORK	"has taken a fork"
-// # define DIED	"died"
-// # define EATING	"is eating"
-// # define THINKING "is thinking"
-// # define SLEEPING "is sleeping"
 
 typedef enum e_state
 {
@@ -63,7 +58,7 @@ typedef struct s_philo
 typedef struct s_store
 {
 	int				error;
-	int			fnsh_game;
+	int				fnsh_game;
 	int				end_meal;
 	long long		t_start;
 	long long		t_eat;
@@ -73,8 +68,8 @@ typedef struct s_store
 	int				meal_limit;
 	t_philo			**philo;
 	pthread_mutex_t	checks;
+	pthread_mutex_t	print;
 	pthread_mutex_t	*fork;
-	pthread_mutex_t print;
 }		t_store;
 
 int			check_digit(char **str);

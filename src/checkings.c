@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 19:23:55 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/10 20:34:03 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 21:27:08 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	philo_start(t_store *store)
 		i = -1;
 		while (++i < store->n_philo)
 		{
-			pthread_create(&store->philo[i]->thd, NULL, \
-					routine, store->philo[i]);
+			pthread_create(&store->philo[i]->thd, NULL,
+				routine, store->philo[i]);
 		}
 		while (store->fnsh_game == GAME_RUNNING)
 			monitor(store);
@@ -69,7 +69,6 @@ void	monitor(t_store *store)
 			i++;
 		}
 		meal_limit_check(store);
-
 		pthread_mutex_lock(&store->checks);
 		if (store->fnsh_game == GAME_OVER)
 		{
@@ -77,34 +76,18 @@ void	monitor(t_store *store)
 			return ;
 		}
 		pthread_mutex_unlock(&store->checks);
-
 		usleep(1000);
 	}
 }
-// {
-// 	int	death_id;
-
-// 	death_id = 0;
-// 	while (store->fnsh_game == GAME_RUNNING)
-// 	{
-// 		check_life(store->philo[death_id]);
-// 		meal_limit_check(store);
-// 		usleep(1000);
-// 		if (death_id + 1 == store->n_philo)
-// 			death_id = -1;
-// 		death_id++;
-// 	}
-// }
 
 void	check_life(t_philo *plo)
 {
 	pthread_mutex_lock(&plo->args->checks);
-	if(plo->args->fnsh_game == GAME_OVER)
+	if (plo->args->fnsh_game == GAME_OVER)
 	{
 		pthread_mutex_unlock(&plo->args->checks);
 		return ;
 	}
-	
 	if ((timestamp(plo->args) - plo->last_meal) >= plo->args->t_die)
 	{
 		plo->args->fnsh_game = GAME_OVER;

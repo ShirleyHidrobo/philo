@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 19:58:33 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/10 19:57:58 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 21:28:51 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ long long	timestamp(t_store *store)
 void	ft_sleeper(t_philo *plo, int t_2_wait)
 {
 	long long	start;
+
 	start = timestamp(plo->args);
 	while ((timestamp(plo->args) - start) < t_2_wait)
 		usleep(30);
