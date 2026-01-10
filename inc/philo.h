@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 18:42:37 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/08 20:26:28 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 20:16:46 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,26 @@
 # define SUCCESS 0
 # define FAILURE 1
 
+# define GAME_RUNNING 0
+# define GAME_OVER 1
+
 # define ERR_INV_ARG "Invalid argument detected"
 # define ERR_ARGC_NUM "The program expects 4-5 Numeric Args"
-# define ERR_ARG_EXPECT "Ex: ./philo [num of philo] [time 2 die] [time 2 eat]"
-# define GFORK	"has taken a fork"
-# define DIED	"died"
-# define EATING	"is eating"
-# define THINKING "is thinking"
-# define SLEEPING "is sleeping"
+# define ERR_ARG_EXPECT "Ex: ./philo [num of philo] [time to die] [time to eat]"
+// # define GFORK	"has taken a fork"
+// # define DIED	"died"
+// # define EATING	"is eating"
+// # define THINKING "is thinking"
+// # define SLEEPING "is sleeping"
+
+typedef enum e_state
+{
+	GFORK,
+	EATING,
+	SLEEPING,
+	THINKING,
+	DIED
+}	t_state;
 
 typedef struct s_philo	t_philo;
 typedef struct s_store	t_store;
@@ -51,7 +63,7 @@ typedef struct s_philo
 typedef struct s_store
 {
 	int				error;
-	bool			fnsh_game;
+	int			fnsh_game;
 	int				end_meal;
 	long long		t_start;
 	long long		t_eat;
@@ -62,6 +74,7 @@ typedef struct s_store
 	t_philo			**philo;
 	pthread_mutex_t	checks;
 	pthread_mutex_t	*fork;
+	pthread_mutex_t print;
 }		t_store;
 
 int			check_digit(char **str);
@@ -77,7 +90,7 @@ void		init_philos(t_store *store);
 void		philo_start(t_store *store);
 void		*routine(void *val);
 void		*single_philo(void *p);
-void		printer(t_philo *plo, char *str);
+void		printer(t_philo *plo, t_state state);
 void		ft_sleeper(t_philo *plo, int t_2_wait);
 void		philo_destroy(t_store *store);
 void		monitor(t_store *store);
@@ -87,6 +100,5 @@ void		p_sleeps(t_philo *plo);
 void		check_life(t_philo *plo);
 void		grab_fork(t_philo *plo);
 void		meal_limit_check(t_store *store);
-void		printeright_f(t_philo *plo);
 
 #endif

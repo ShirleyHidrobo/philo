@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 18:06:01 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/08 18:15:46 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 18:01:52 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	check_overflow(t_store *store, char **av)
 			return (FAILURE);
 	}
 	else
-		store->meal_limit = false;
+		store->meal_limit = -1;
 	return (SUCCESS);
 }
 
@@ -50,8 +50,8 @@ int	init_start(char **av, t_store *store)
 	int	i;
 
 	i = -1;
-	store->error = false;
-	store->fnsh_game = false;
+	store->error = GAME_RUNNING;
+	store->fnsh_game = GAME_RUNNING;
 	store->end_meal = 0;
 	store->n_philo = ft_atoi(av[1]);
 	store->t_die = ft_atoi(av[2]);
@@ -65,6 +65,7 @@ int	init_start(char **av, t_store *store)
 	store->philo = malloc(store->n_philo * (sizeof(t_philo *)));
 	store->fork = malloc(store->n_philo * (sizeof(pthread_mutex_t)));
 	pthread_mutex_init(&store->checks, NULL);
+	pthread_mutex_init(&store->print, NULL);
 	while (++i < store->n_philo)
 		pthread_mutex_init(&store->fork[i], NULL);
 	init_philos(store);

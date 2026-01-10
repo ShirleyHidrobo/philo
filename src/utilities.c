@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:31:08 by shhidrob          #+#    #+#             */
-/*   Updated: 2026/01/08 20:38:25 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 20:22:38 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 
 static int	ft_isdigit(int ascii_nbr)
 {
-	if (ascii_nbr >= '0' && ascii_nbr <= '9')
-		return (FAILURE);
-	return (SUCCESS);
+	return (ascii_nbr >= '0' && ascii_nbr <= '9');
 }
 
 int	check_digit(char **str)
@@ -84,12 +82,37 @@ void	*ft_calloc(size_t count, size_t size)
 	return (ptr);
 }
 
-void	printer(t_philo *plo, char *str)
+void	printer(t_philo *plo, t_state state)
 {
-	if (plo->args->fnsh_game == false)
+	long long	time;
+
+	pthread_mutex_lock(&plo->args->print);
+
+	time = timestamp(plo->args);
+
+	if(state == DIED)
 	{
-		pthread_mutex_lock(&plo->args->checks);
-		printf("%lld %d %s\n", timestamp(plo->args), plo->id_num, str);
-		pthread_mutex_unlock(&plo->args->checks);
+		printf("%lld %d died\n", timestamp(plo->args), plo->id_num);
+		pthread_mutex_unlock(&plo->args->print);
+		return ;
 	}
+
+	pthread_mutex_lock(&plo->args->checks);
+	if (plo->args->fnsh_game == GAME_OVER)
+	{
+		pthread_mutex_unlock(&plo->args->checks);
+		pthread_mutex_unlock(&plo->args->print);
+		return ;
+	}
+	pthread_mutex_unlock(&plo->args->checks);
+
+	if (state == GFORK)
+		printf("%lld %d has taken a fork\n", time, plo->id_num);
+	else if (state == EATING)
+		printf("%lld %d is eating\n", time, plo->id_num);
+	else if (state == SLEEPING)
+		printf("%lld %d is sleeping\n", time, plo->id_num);
+	else if (state == THINKING)
+		printf("%lld %d is thinking\n", time, plo->id_num);
+	pthread_mutex_unlock(&plo->args->print);
 }

@@ -6,7 +6,7 @@
 /*   By: shhidrob <shhidrob@student.42london.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/26 19:58:33 by shhidrob          #+#    #+#             */
-/*   Updated: 2025/11/18 18:03:51 by shhidrob         ###   ########.fr       */
+/*   Updated: 2026/01/10 19:57:58 by shhidrob         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,8 @@ long long	timestamp(t_store *store)
 
 void	ft_sleeper(t_philo *plo, int t_2_wait)
 {
-	long long	current_time;
-	long long	diff;
-
-	current_time = timestamp(plo->args);
-	while (1)
-	{
-		pthread_mutex_lock(&plo->args->checks);
-		diff = (timestamp(plo->args) - current_time);
-		if (diff >= t_2_wait)
-		{
-			pthread_mutex_unlock(&plo->args->checks);
-			break ;
-		}
-		pthread_mutex_unlock(&plo->args->checks);
-		usleep(100);
-	}
-}
-
-void	printeright_f(t_philo *plo)
-{
-	printer(plo, GFORK);
-	printer(plo, GFORK);
+	long long	start;
+	start = timestamp(plo->args);
+	while ((timestamp(plo->args) - start) < t_2_wait)
+		usleep(30);
 }
